@@ -1,14 +1,6 @@
 //When the document is ready...
 
-
-
-
-// $(document).ready(function() {
-
-
-
-
-
+$(document).ready(function() {
 
 //Attach yourself to the hit form
 //traverse the DOM for #hit form input
@@ -18,28 +10,19 @@
 //Click is an event handler.  
 
 
+  $(document).on('click', '#hit_form input',function() {
 
-
-
-
-//   $(document).on('click', '#hit_form input',function() {
-
-//     $.ajax({
-//       type: 'POST',
-//       url: '/hit_me'
-//     }).done(function(msg) {
-//       $('#game').replaceWith(msg);
-//     });
+    $.ajax({
+      type: 'POST',
+      url: '/hit_me'
+    }).done(function(msg) {
+      $('#game').replaceWith(msg);
+    });
  
-// //return false discontinues the execution of the button
-//     return false;
-//   });
-// });
-
-
-
-
-
+//return false discontinues the execution of the button
+    return false;
+  });
+});
 
 
 

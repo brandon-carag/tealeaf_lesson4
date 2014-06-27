@@ -153,7 +153,7 @@ get '/players_turn' do
     @error="#{session[:player_name]} busted.  The Dealer wins!"
     erb :show_cards
   else
-    erb :show_cards
+    erb :show_cards, layout: false
   end
 end
 
@@ -173,6 +173,10 @@ if hand_total(session["dealer_cards"]) >=17
     if hand_total(session["dealer_cards"]) > hand_total(session["player1_cards"])
       gameover("d_win")
       @error="#{session[:player_name]} lost!  The Dealer's cards are higher"
+      erb :show_cards
+    elsif hand_total(session["dealer_cards"]) == hand_total(session["player1_cards"])
+      gameover("tie")
+      @success="It was a tie!  The dealer's hand was 17 or over and the totals for your hands matched!"
       erb :show_cards
     else
       gameover("p_win")
@@ -207,6 +211,9 @@ end
 post '/set_bet' do
   if session[:bank]<=0
     @error="You're broke. Go get a job."
+    halt erb :game
+  elsif params[:bet].to_i <=0
+    @error="You entered an invalid bet amount--it must be a positive integer."
     halt erb :game
   elsif params[:bet].empty?
     @error="A bet is required"
