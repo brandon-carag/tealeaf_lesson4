@@ -22,7 +22,7 @@ $(document).ready(function() {
 
 
 
-$(document).ready(function() {
+
 
   $(document).on('click', '#stay_form input',function() {
 
@@ -35,10 +35,20 @@ $(document).ready(function() {
  
     return false;
   });
-});
 
 
 
+  $(document).on('click', '#dealer_hit_form',function() {
+
+    $.ajax({
+      type: 'POST',
+      url: '/dealer_hits'
+    }).done(function(msg) {
+      $('#game').replaceWith(msg);
+    });
+ 
+    return false;
+  });
 
 
 // TO DO LIST

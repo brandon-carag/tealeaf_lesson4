@@ -1,5 +1,20 @@
-
 <div id="game">
+
+
+<%#Had to jerry-rig this template because the unobstusive
+jquery was causing bugs--namely @error messages were either
+not showing up at all or being displayed multiple times
+despite the use of "on" and "ReplaceWith" functions being used.
+%>
+
+<%if @error %>
+      <div class="alert alert-error"><%=@error%></div>
+    <% end %>
+    <%if @success %>
+      <div class="alert alert-success"><%=@success%></div>
+    <% end %>
+
+
 <div class="well">
 
 </br>
@@ -38,20 +53,20 @@
   <form id="hit_form" action='/hit_me' method='post'>  
     <input type='submit' class='btn btn-primary' value="Hit Me">
   </form>
-  <form is="stay_form" action='/stay' method='post'>  
+  <form id="stay_form" action='/stay' method='post'>  
     <input type='submit' class='btn btn-info' value="Stay">
   </form>
 <%else%>
 <%end%>
 
 <%if @dealer_turn==true%>
-<form action='/dealer_hits' method='post'>  
+<form id="dealer_hit_form" action='/dealer_hits' method='post'>  
   <input type='submit' class='btn btn-primary' value="See Dealer's Next Move">
 </form>
 <%end%>
 
 <%if @game_done==true%>
-  <form action='/game' method='get'>  
+  <form id="play_again_form" action='/game' method='get'>  
   <input type='submit' class='btn btn-primary' value="Click to Play Again">
   </form>
 <%end%>

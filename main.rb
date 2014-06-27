@@ -151,9 +151,9 @@ get '/players_turn' do
   if bust_check(hand_total(session["player1_cards"]))==true
     gameover("d_win")
     @error="#{session[:player_name]} busted.  The Dealer wins!"
-    erb :show_cards
-  else
     erb :show_cards, layout: false
+  else
+    erb :show_cards
   end
 end
 
@@ -161,7 +161,7 @@ get '/player_stays' do
   @hit_or_stay=false
   @dealer_turn=true
   @flop=false
-  erb :show_cards
+  erb :show_cards, layout: false
 end
 
 get '/dealers_turn' do
@@ -173,26 +173,27 @@ if hand_total(session["dealer_cards"]) >=17
     if hand_total(session["dealer_cards"]) > hand_total(session["player1_cards"])
       gameover("d_win")
       @error="#{session[:player_name]} lost!  The Dealer's cards are higher"
-      erb :show_cards
+      erb :show_cards, layout: false
     elsif hand_total(session["dealer_cards"]) == hand_total(session["player1_cards"])
       gameover("tie")
       @success="It was a tie!  The dealer's hand was 17 or over and the totals for your hands matched!"
-      erb :show_cards
+      erb :show_cards, layout: false
     else
       gameover("p_win")
       @success="#{session[:player_name]} wins!  Your cards are higher and the Dealer is above 17."
-      erb :show_cards
+      erb :show_cards, layout: false
     end
+else
+  draw_card(session["deck"],session["dealer_cards"])
+  if bust_check(hand_total(session["dealer_cards"]))==true
+    gameover("p_win")
+    @success="The Dealer busted and #{session[:player_name]} wins!"
+    erb :show_cards, layout: false
   else
-    draw_card(session["deck"],session["dealer_cards"])
-    if bust_check(hand_total(session["dealer_cards"]))==true
-      gameover("p_win")
-      @success="The Dealer busted and #{session[:player_name]} wins!"
-      erb :show_cards
-    else
-      erb :show_cards
-    end
+      erb :show_cards, layout: false
   end
+end
+
 end
 
 
