@@ -1,0 +1,56 @@
+<%=gameover_message(session[:game_status])%></h4></br></br>
+
+<form action='/game' method='get'>  
+  <input type='submit' class='btn btn-primary' value="Click to Play Again">
+</form>
+
+<div class="well">
+<h4>Dealer's Cards.  Total is <%=hand_total(session["dealer_cards"])%></h4>
+</br>
+<% image_names(session["dealer_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+" class='card_image'/>" %>
+<% end %>
+</div>
+
+
+</br>
+</br>
+
+<div class="well">
+<h4>Player's Cards.  Total is <%=hand_total(session["player1_cards"])%></h4>
+</br>
+<% image_names(session["player1_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+" class='card_image'/>" %>
+<% end %>
+</div>
+</br>
+
+
+
+<!-- </br>
+<% image_names(session["dealer_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+"/>  " %>
+<% end %>
+</br>
+<%=(session["dealer_cards"].keys)%>
+  The dealer's hand total is: <%=hand_total(session["dealer_cards"])%>
+</br>
+</br>
+
+
+The player's cards are:
+</br>
+<% image_names(session["player1_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+"/>  " %>
+<% end %>
+</br>
+
+<%=session["player1_cards"].keys%>  The player's hand total is: <%=hand_total(session["player1_cards"])%>
+
+</br>
+
+<%=gameover_message(session[:game_status])%>
+
+<form action='/game' method='get'>  
+  <input type='submit' class='btn' value="Click to Play Again">
+</form> -->

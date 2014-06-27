@@ -1,0 +1,29 @@
+<h4>I'm a test page</h4>
+<img src=/images/cards/Clubs_10.jpg/>
+
+
+<%def image_names(arr)
+arr.map{|x|case when x[0]=="H" then "Hearts_"+x[1..2]+".jpg"
+when x[0]=="S" then "Spades_"+x[1..2]+".jpg"
+when x[0]=="C" then "Clubs_"+x[1..2]+".jpg"
+when x[0]=="D" then "Diamonds_"+x[1..2]+".jpg"
+end}
+end%>
+
+<%arr=["C10", "DA"]%>
+
+
+def show_images(names_of_images_array)
+names_of_images_array.each do |x| puts "<img src=/images/cards/"+x+"/>"
+end
+end
+
+
+
+
+
+
+<img src="/images/cards/clubs_2.jpg"/>
+<img src="/images/cards/clubs_3.jpg"/>
+<img src="/images/cards/clubs_2.jpg"/>
+<img src="/images/cards/clubs_3.jpg"/>

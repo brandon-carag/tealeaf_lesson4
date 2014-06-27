@@ -1,0 +1,54 @@
+<h3>Your turn is over, and it's now the dealer's turn.  He will hit until his hand total reaches 17 or greater.</h3>
+
+
+<div class="well">
+<h4>Dealer's Cards.  Total is <%=hand_total(session["dealer_cards"])%></h4>
+</br>
+<% image_names(session["dealer_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+" class='card_image'/>" %>
+<% end %>
+</div>
+
+
+</br>
+</br>
+
+<div class="well">
+<h4>Player's Cards.  Total is <%=hand_total(session["player1_cards"])%></h4>
+</br>
+<% image_names(session["player1_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+" class='card_image'/>" %>
+<% end %>
+</div>
+</br>
+
+<form action='/dealer_hits' method='post'>  
+  <input type='submit' class='btn btn-primary' value="See Dealer's Next Move">
+</form>
+
+
+
+<!-- </br>
+<% image_names(session["dealer_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+"/>  " %>
+<% end %>
+</br>
+<%=(session["dealer_cards"].keys)%>
+  The dealer's hand total is: <%=hand_total(session["dealer_cards"])%>
+</br>
+</br>
+
+
+The player's cards are:
+</br>
+<% image_names(session["player1_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+"/>  " %>
+<% end %>
+</br>
+
+<%=session["player1_cards"].keys%>  The player's hand total is: <%=hand_total(session["player1_cards"])%>
+
+</br>
+<form action='/dealer_hits' method='post'>  
+  <input type='submit' class='btn' value="See Dealer's Next Move">
+</form> -->

@@ -1,0 +1,36 @@
+<div id='game'>
+
+
+<div class="well">
+<h4>Dealer's Cards</h4>
+</br>
+<%first_card=image_names(session["player1_cards"].keys)[0]%>
+<%="<img src=/images/cards/"+first_card+" class='card_image'/>"%>
+<img src=/images/cards/cover.jpg/>
+</div>
+
+
+</br>
+</br>
+
+<div class="well">
+<h4>Player's Cards.  Total is <%=hand_total(session["player1_cards"])%></h4>
+</br>
+<% image_names(session["player1_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+" class='card_image'/>" %>
+<% end %>
+</div>
+</br>
+
+<h3>Would you like to hit or stay?</h3>
+</br>
+<form id="hit_form" action='/hit_me' method='post'>  
+  <input type='submit' class='btn btn-primary' value="Hit Me">
+</form>
+<form is="stay_form" action='/stay' method='post'>  
+  <input type='submit' class='btn btn-info' value="Stay">
+</form>
+
+
+
+</div>
