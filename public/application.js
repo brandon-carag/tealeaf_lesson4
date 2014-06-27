@@ -1,15 +1,11 @@
 //When the document is ready...
-
 $(document).ready(function() {
 
 //Attach yourself to the hit form
 //traverse the DOM for #hit form input
 //look for all the input attached to it.
 //bind 
-
 //Click is an event handler.  
-
-
   $(document).on('click', '#hit_form input',function() {
 
     $.ajax({
@@ -25,6 +21,21 @@ $(document).ready(function() {
 });
 
 
+
+$(document).ready(function() {
+
+  $(document).on('click', '#stay_form input',function() {
+
+    $.ajax({
+      type: 'POST',
+      url: '/stay'
+    }).done(function(msg) {
+      $('#game').replaceWith(msg);
+    });
+ 
+    return false;
+  });
+});
 
 
 
