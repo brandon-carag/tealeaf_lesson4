@@ -1,12 +1,21 @@
 
-
-
 <div class="well">
-<h4>Dealer's Cards</h4>
+
 </br>
-<%first_card=image_names(session["player1_cards"].keys)[0]%>
-<%="<img src=/images/cards/"+first_card+" class='card_image'/>"%>
-<img src=/images/cards/cover.jpg/>
+<%if @flop==true%>
+  <h4>Dealer's Cards</h4>
+  <%first_card=image_names(session["player1_cards"].keys)[0]%>
+  <%="<img src=/images/cards/"+first_card+" class='card_image'/>"%>
+  <img src=/images/cards/cover.jpg/>
+
+<%elsif @flop==false%>
+  <h4>Dealer's Cards.  Total is <%=hand_total(session["dealer_cards"])%></h4>
+  </br>
+  <% image_names(session["dealer_cards"].keys).each do |x| %>
+  <%="<img src=/images/cards/"+x+" class='card_image'/>" %>
+  <%end%>
+<%end%>
+
 </div>
 
 
@@ -22,12 +31,27 @@
 </div>
 </br>
 
-<h3>Would you like to hit or stay?</h3>
-</br>
-<form id="hit_form_noajax" action='/hit_me' method='post'>  
-  <input type='submit' class='btn btn-primary' value="Hit Me">
+<%if @hit_or_stay!=false%>
+  <h3>Would you like to hit or stay?</h3>
+  </br>
+  <form id="hit_form" action='/hit_me' method='post'>  
+    <input type='submit' class='btn btn-primary' value="Hit Me">
+  </form>
+  <form is="stay_form" action='/stay' method='post'>  
+    <input type='submit' class='btn btn-info' value="Stay">
+  </form>
+<%else%>
+<%end%>
+
+<%if @dealer_turn==true%>
+<form action='/dealer_hits' method='post'>  
+  <input type='submit' class='btn btn-primary' value="See Dealer's Next Move">
 </form>
-<form is="stay_form_noajax" action='/stay' method='post'>  
-  <input type='submit' class='btn btn-info' value="Stay">
-</form>
+<%end%>
+
+<%if @game_done==true%>
+  <form action='/game' method='get'>  
+  <input type='submit' class='btn btn-primary' value="Click to Play Again">
+  </form>
+<%end%>
 

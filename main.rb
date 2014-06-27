@@ -14,22 +14,14 @@ def draw_card(deck_passed_in,player_cards)
 end
 
 def hand_total(cards)
-  #if one ace exists
-  if cards.select{|k,v|v==11}.count==1 && cards.select{|k,v|v!=11}.values.inject{|a,b|a+b}+11>21
-  hand_total=cards.select{|k,v|v!=11}.values.inject{|a,b|a+b}+1
-  #if two aces exist
-  elsif cards.select{|k,v|v==11}.count==2 && cards.select{|k,v|v!=11}.values.inject{|a,b|a+b}+12>21
-  hand_total=cards.select{|k,v|v!=11}.values.inject{|a,b|a+b}+2
-  #if three aces exist
-  elsif cards.select{|k,v|v==11}.count==3 && cards.select{|k,v|v!=11}.values.inject{|a,b|a+b}+13>21
-  hand_total=cards.select{|k,v|v!=11}.values.inject{|a,b|a+b}+3
-  #if four aces exist
-  elsif cards.select{|k,v|v==11}.count==4 && cards.select{|k,v|v!=11}.values.inject{|a,b|a+b}+14>21
-  hand_total=cards.select{|k,v|v!=11}.values.inject{|a,b|a+b}+4
-  #if no aces exist
-  else
   hand_total=cards.values.inject{|a,b|a+b}
-  end
+  ace_count=cards.select{|k,v|v==11}.count
+  
+  while ace_count !=0 && hand_total>21 do
+    hand_total-=10
+    ace_count-=1
+  end  
+  hand_total
 end
 
 def blackjack_check(cards)
@@ -50,15 +42,15 @@ def bust_check(total)
   end
 end
 
-def gameover_message(status)
-  if status=="tie"
-    "It's a tie!"
-  elsif status=="player_wins"
+def gameover(status)
+  @hit_or_stay=false
+  @dealer_turn=false
+  @game_done=true
+
+  if status=="p_win"
     session["bank"]+=session["bet"].to_i
-    " #{session[:player_name]}"+" wins!"
-  elsif status=="dealer_wins"
+  elsif status=="d_win"
     session["bank"]-=session["bet"].to_i
-    "Dealer wins and you lose!"
   end
 end
 
@@ -103,9 +95,6 @@ end
 
 #================================GET ACTIONS====================================================
 
-get '/tester' do 
-  erb :tester
-end
 
 get '/' do 
   session["bank"]=500
@@ -116,7 +105,11 @@ get '/game' do
   erb :game
 end
 
+
 get '/show_cards' do
+@flop=true
+@gameover=false
+
 session["deck"]=[]
 session["deck"]={"H2"=>2,"H3"=>3,"H4"=>4,"H5"=>5,"H6"=>6,"H7"=>7,"H8"=>8,"H9"=>9,"H10"=>10,"HJ"=>10,"HQ"=>10,"HK"=>10,"HA"=>11,
 "C2"=>2,"C3"=>3,"C4"=>4,"C5"=>5,"C6"=>6,"C7"=>7,"C8"=>8,"C9"=>9,"C10"=>10,"CJ"=>10,"CQ"=>10,"CK"=>10,"CA"=>11,
@@ -130,39 +123,74 @@ session["dealer_cards"]={}
 2.times {draw_card(session["deck"],session["player1_cards"])}
 
 
-
 if hand_total(session["dealer_cards"])==21 && hand_total(session["player1_cards"])==21
   session["game_status"]="tie"
-  erb :gameover
+  @flop=false
+  gameover("tie")
+  @success="Both players got blackjack!"
+  erb :show_cards
 elsif hand_total(session["player1_cards"])==21
   session["game_status"]="player_wins"
-  erb :gameover
+  gameover("p_win")
+  @success="#{session[:player_name]} got Blackjack!"
+  erb :show_cards
 elsif hand_total(session["dealer_cards"])==21
   session["game_status"]="dealer_wins"
-  erb :gameover
-else
-erb :show_cards
+  @flop=false
+  gameover("d_win")
+  @error="The Dealer got blackjack.  #{session[:player_name]} lost."
+  erb :show_cards
 end
+
+erb :show_cards
 end
 
 
 get '/players_turn' do
+  @flop=true
   if bust_check(hand_total(session["player1_cards"]))==true
-    session["game_status"]="dealer_wins"
-    erb :gameover
+    gameover("d_win")
+    @error="#{session[:player_name]} busted.  The Dealer wins!"
+    erb :show_cards
   else
-    erb :players_turn_template
+    erb :show_cards
   end
 end
 
-get '/dealers_turn' do
-  erb :dealers_turn_template
+get '/player_stays' do
+  @hit_or_stay=false
+  @dealer_turn=true
+  @flop=false
+  erb :show_cards
 end
 
-get '/gameover' do
-  @error="GAMEOVER"
-  erb :gameover
+get '/dealers_turn' do
+  @hit_or_stay=false
+  @dealer_turn=true
+  @flop=false
+  
+if hand_total(session["dealer_cards"]) >=17
+    if hand_total(session["dealer_cards"]) > hand_total(session["player1_cards"])
+      gameover("d_win")
+      @error="#{session[:player_name]} lost!  The Dealer's cards are higher"
+      erb :show_cards
+    else
+      gameover("p_win")
+      @success="#{session[:player_name]} wins!  Your cards are higher and the Dealer is above 17."
+      erb :show_cards
+    end
+  else
+    draw_card(session["deck"],session["dealer_cards"])
+    if bust_check(hand_total(session["dealer_cards"]))==true
+      gameover("p_win")
+      @success="The Dealer busted and #{session[:player_name]} wins!"
+      erb :show_cards
+    else
+      erb :show_cards
+    end
+  end
 end
+
 
 
 #================================POST ACTIONS====================================================
@@ -177,9 +205,14 @@ post '/set_name' do
 end
 
 post '/set_bet' do
-  if params[:bet].empty?
+  if session[:bank]<=0
+    @error="You're broke. Go get a job."
+    halt erb :game
+  elsif params[:bet].empty?
     @error="A bet is required"
     halt erb :game
+  elsif session[:bank]<=0
+
   end
   session[:bet]=params[:bet]
   redirect '/show_cards'
@@ -191,28 +224,11 @@ post '/hit_me' do
 end
 
 post '/stay' do
-  redirect '/dealers_turn'
+  redirect '/player_stays'
 end
 
 post '/dealer_hits' do
-  if hand_total(session["dealer_cards"]) >=17
-    if hand_total(session["dealer_cards"]) > hand_total(session["player1_cards"])
-      session["game_status"]="dealer_wins"
-      redirect '/gameover'
-    else
-      session["game_status"]="player_wins"
-      redirect '/gameover'
-    end
-  else
-    draw_card(session["deck"],session["dealer_cards"])
-    if bust_check(hand_total(session["dealer_cards"]))==true
-      session["game_status"]="player_wins"
-      redirect '/gameover'
-    else
-      redirect '/dealers_turn'
-    end
-  end
-
+  redirect '/dealers_turn'
 end
 
 

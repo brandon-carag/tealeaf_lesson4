@@ -1,0 +1,25 @@
+Hello WHAT
+<div class="well">
+<h4>Dealer's Cards.  Total is <%=hand_total(session["dealer_cards"])%></h4>
+</br>
+<% image_names(session["dealer_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+" class='card_image'/>" %>
+<% end %>
+</div>
+
+
+</br>
+</br>
+
+<div class="well">
+<h4>Player's Cards.  Total is <%=hand_total(session["player1_cards"])%></h4>
+</br>
+<% image_names(session["player1_cards"].keys).each do |x| %>
+<%="<img src=/images/cards/"+x+" class='card_image'/>" %>
+<% end %>
+</div>
+</br>
+
+<form action='/dealer_hits' method='post'>  
+  <input type='submit' class='btn btn-primary' value="See Dealer's Next Move">
+</form>
